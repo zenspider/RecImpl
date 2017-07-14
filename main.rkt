@@ -26,6 +26,11 @@
                      )
          )
 
+(struct fn (name body)
+  #:property prop:procedure (struct-field-index body)
+  #:property prop:custom-write (lambda (v p m)
+                                 (write (list 'function (fn-name v)) p)))
+
 (define true #t)
 (define false #f)
 
@@ -50,7 +55,7 @@
 (define-syntax (defun stx)
   (syntax-parse stx
     [(_ (id:id x:id) body:expr)
-     #'(define (id x) body)]))
+     #'(define id (fn 'id (lambda (x) body)))]))
 
 (define-syntax (rec-if stx)
   (syntax-parse stx
