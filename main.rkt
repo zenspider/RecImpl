@@ -31,8 +31,11 @@
   #:property prop:custom-write (lambda (v p m)
                                  (write (list 'function (fn-name v)) p)))
 
-(define true #t)
-(define false #f)
+(struct ttrue  () #:property prop:custom-write (lambda (v p m) (display "true" p)))
+(struct tfalse () #:property prop:custom-write (lambda (v p m) (display "false" p)))
+
+(define true (ttrue))
+(define false (tfalse))
 
 (module+ test
   (require rackunit))
@@ -61,9 +64,10 @@
   (syntax-parse stx
     [(_ c:expr t:expr f:expr)
      #'(let ([c* c])
-         (if (boolean? c*)
-             (if c* t f)
-             (error 'if "condition used without boolean, got ~v" c*)))]))
+         (cond
+           [(eq? c* true) t]
+           [(eq? c* false) f]
+           [else (error 'if "condition used without boolean, got ~v" c*)]))]))
 
 (define-syntax (rec-let stx)
   (syntax-parse stx
