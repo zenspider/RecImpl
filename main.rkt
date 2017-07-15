@@ -90,7 +90,7 @@
 (define-simple-macro (rec-zero? e:expr)
   (let ([e* e])
     (check-number 'zero? e*)
-    (zero? e*)))
+    (binary (zero? e*))))
 
 (define-simple-macro (rec-plus a:expr b:expr)
   (let ([a* a]
@@ -107,7 +107,7 @@
 (define-simple-macro (rec-empty? e:expr)
   (let ([e* e])
     (check-string 'empty? e*)
-    (not (non-empty-string? e*))))
+    (binary (zero? (string-length e*)))))
 
 (define-simple-macro (++ a:expr b:expr)
   (let ([a* a]
@@ -115,6 +115,9 @@
     (check-string '+ a*)
     (check-string '+ b*)
     (string-append a* b*)))
+
+(define (binary x)
+  (if x true false))
 
 (define (check-number fn v)
   (unless (number? v) (error fn "~v is not a number" v)))
