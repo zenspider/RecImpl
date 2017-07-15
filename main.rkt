@@ -99,10 +99,14 @@
     (check-number '+ b*)
     (+ a* b*)))
 
-(define-simple-macro (function id:id)
-  (if (procedure? id)
-      id
-      (error 'function "~v is not a function" id)))
+(define-syntax (function stx)
+  (syntax-parse stx
+    [(_ id:id)
+    (if (identifier-binding #'id)
+        #'(if (procedure? id)
+              id
+              (error 'function "~v is not a function" id))
+        #'(fn 'id (lambda (x) (error 'application "~a is not a procedure" 'id))))]))
 
 (define-simple-macro (rec-empty? e:expr)
   (let ([e* e])
