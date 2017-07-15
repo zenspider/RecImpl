@@ -77,14 +77,14 @@
 (define-syntax (record stx)
   (syntax-parse stx
     [(_ (s:str e:expr) ...)
-     #'(list 'record (cons s e) ...)]))
+     #'(list 'record (list s e) ...)]))
 
 (define-syntax (@ stx)
   (syntax-parse stx
     [(_ r:expr e:str)
      #'(let ([r* r])
          (if (list? r*)
-             (dict-ref (cdr r*) e (lambda () (error '@ "~a not found in ~a" e r*)))
+             (car (dict-ref (cdr r*) e (lambda () (error '@ "~a not found in ~a" e r*))))
              (error '@ "not a record, got ~a" r*)))]))
 
 (define-simple-macro (rec-zero? e:expr)
