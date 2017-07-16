@@ -81,11 +81,12 @@
 
 (define-syntax (@ stx)
   (syntax-parse stx
-    [(_ r:expr e:str)
+    [(_ r:expr e:expr)
      #'(let ([r* r])
-         (if (list? r*)
-             (car (dict-ref (cdr r*) e (lambda () (error '@ "~a not found in ~a" e r*))))
-             (error '@ "not a record, got ~a" r*)))]))
+         (check-record '@ r*)
+         (check-string '@-key e)
+         (car (dict-ref (cdr r*) e
+                        (lambda () (error '@ "~a not found in ~a" e r*)))))]))
 
 (define-simple-macro (rec-zero? e:expr)
   (let ([e* e])
@@ -122,6 +123,10 @@
 
 (define (binary x)
   (if x true false))
+
+(define (check-record fn v)
+  (unless (and (list? v) (eq? 'record (car v)))
+    (error fn "~v is not a record" v)))
 
 (define (check-number fn v)
   (unless (number? v) (error fn "~v is not a number" v)))
