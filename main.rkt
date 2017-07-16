@@ -29,7 +29,7 @@
 (struct fn (name body)
   #:property prop:procedure (struct-field-index body)
   #:property prop:custom-write (lambda (v p m)
-                                 (write (list 'function (fn-name v)) p)))
+                                 (print `(function ,(fn-name v)) p)))
 
 (struct ttrue  () #:property prop:custom-write (lambda (v p m) (display "true" p)))
 (struct tfalse () #:property prop:custom-write (lambda (v p m) (display "false" p)))
